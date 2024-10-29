@@ -1,13 +1,23 @@
-// routes/user.js
 const express = require('express');
-const { homeroute,userhandle,usersignup, Login,usersLogin } = require('../controllers/user'); // Corrected import path
+const {LoginAuthenticator} = require('../middlewares/auth')
+const { homeroute,userCreation,
+        usersignupRender,Login,
+        usersLoginRender,adminPage
+         } = require('../controllers/user'); 
+
 const router = express.Router();
 
-router.get('/', homeroute);
-router.get('/signup',usersignup)
-router.post('/signup',userhandle)
-router.get('/login',usersLogin)
+//home
+router.get('/',LoginAuthenticator, homeroute);
+
+//signup and login
+router.get('/signup',usersignupRender)
+router.get('/login',usersLoginRender)
+router.post('/signup',userCreation)
 router.post('/login',Login)
+
+//admin
+router.get('/admin',LoginAuthenticator,adminPage)
 
 
 module.exports = router; // Export the router directly

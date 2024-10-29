@@ -1,53 +1,89 @@
 
 const User = require('../models/user')
+const {createToken} = require('../service/auth')
 
+
+// Render Pages
 function homeroute(req, res) {
-    res.render('home', {
-        blog: 'new blog post 1'
-    });
+    const user =req.user
+    res.render('home',{blog:user.id});
 }
 
-function usersignup(req,res) {
-    res.render('signup')
+function usersignupRender(req,res) {
+    res.render('signup',{userExists:false})
 }
-function usersLogin(req,res) {
+function usersLoginRender(req,res) {
     res.render('login')
 }
 
-async function userhandle(req,res) {
-    const newUser = req.body
-    console.log(newUser);
-    if (newUser) {
-        const result= await User.create({
-            name:newUser.name,
-            email:newUser.email,
-            password:newUser.password
-        })
-        console.log(result);
-        res.redirect('/')
+function adminPage(req,res) {
+    if (req.user.role=='admin') {
+        return res.render('admin',{data:req.user.role})
+    }else{
+        return res.redirect('/')
     }
-    
+}
+//Request Handling 
+async function userCreation(req,res) {
+    try {
+        const newUser = req.body
+        let userCheck=User.findOne({email:newUser.email})
+        if (userCheck) {
+            res.render('signup',{userExists:true})
+        }
+        if (newUser) {
+            const newUser= await User.create({
+                name:newUser.name,
+                email:newUser.email,
+                password:newUser.password
+            })
+            const token = createToken({
+                id:newUser.id,
+                role:newUser.role
+            })
+            res.cookie('idToken',token)
+            res.redirect('/')
+        }
+    } catch (error) {
+        
+    }    
 }
 
 async function Login(req,res) {
-    const userData=req.body
-    console.log(userData);
-    const L_user = await User.findOne({
-        email:userData.email
-    })
-    if(L_user.password==userData.password){
-        console.log(L_user.name);
-        res.render('home',{
-            blog:`welcome ${L_user.name}` 
+    try {
+        const userData=req.body
+        const cur_user = await User.findOne({
+            email:userData.email
         })
+        if(cur_user.password==userData.password){
+            const token = createToken({
+                id:cur_user.id,
+                role:cur_user.role
+            })//Token created            
+            res.cookie('idToken',token)
+            if (cur_user.role=="admin"){
+                res.status(201).redirect('/admin')
+            }else{
+                res.redirect('/')
+            }
+        }else{
+            throw new Error("Invalid Password");
+        }
+    } catch (error) {
+        if (error=="Invalid Password") {
+            res.status(401).json({msg:error})
+        }else{
+            res.status(401).json({msg:error})
+        }
     }
     
 }
 
 module.exports = { 
     homeroute,
-    usersignup,
-    userhandle,
+    usersignupRender,
+    userCreation,
     Login,
-    usersLogin
+    usersLoginRender,
+    adminPage
  };
