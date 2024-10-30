@@ -2,7 +2,6 @@ const { verifyToken } = require('../service/auth');
 
 function LoginAuthenticator(req, res, next) {    
     const userToken = req.cookies?.idToken;
-    
     if (!userToken) {
         return res.redirect('/login'); // Return early if no token
     }

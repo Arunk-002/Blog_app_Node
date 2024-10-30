@@ -7,6 +7,24 @@
 </head>
 <body>
     <h1>blog Home</h1>
-    <%= blog %>
+    <ul>BLogs:
+        <% if (blogs.length >0) { %>
+         <% blogs.forEach(element => { %>
+          <li><%= element.title %> <br>
+            content: <%= element.body %> <br>
+            <a href="/blog/edit/:<%= element.id %>">
+                <button type="submit">update blog</button>
+            </a>
+            <a href="/blog/:<%= element.id %>">
+                <button type="submit">view blog</button>
+            </a>
+        </li>
+         <% }) %>
+        <% } %>
+    </ul>
+    <a href="/blog/add">
+        <button type="submit">Create blog</button>
+    </a>
+    
 </body>
 </html>

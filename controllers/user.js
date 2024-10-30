@@ -1,12 +1,14 @@
 
 const User = require('../models/user')
+const {displayBlogs} = require('./blog')
 const {createToken} = require('../service/auth')
 
 
 // Render Pages
-function homeroute(req, res) {
+async function homeroute(req, res) {
     const user =req.user
-    res.render('home',{blog:user.id});
+    let blogs =  await displayBlogs()    
+    res.render('home',{blogs:blogs,req:user});
 }
 
 function usersignupRender(req,res) {

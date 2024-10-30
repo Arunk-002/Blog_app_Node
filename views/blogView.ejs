@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog view</title>
+</head>
+<body>
+    title: <%= curBlog.title %>
+    <br>
+    body: <%= curBlog.body %>
+    <%= curBlog.id %>
+    <a href="/blog/edit/:<%= curBlog.id %>">
+        <button type="submit">update blog</button>
+    </a>
+    <a href="/blog/del/:<%= curBlog.id %>">
+        <button type="submit">delete blog</button>
+    </a>
+</body>
+</html>
