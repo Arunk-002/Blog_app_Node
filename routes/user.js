@@ -2,7 +2,9 @@ const express = require('express');
 const {LoginAuthenticator} = require('../middlewares/auth')
 const { homeroute,userCreation,
         usersignupRender,Login,
-        usersLoginRender,adminPage
+        usersLoginRender,
+        logoutUser,
+        userHome
          } = require('../controllers/user'); 
 
 const router = express.Router();
@@ -14,10 +16,10 @@ router.get('/',LoginAuthenticator, homeroute);
 router.get('/signup',usersignupRender)
 router.get('/login',usersLoginRender)
 router.post('/signup',userCreation)
+router.get('/user',LoginAuthenticator,userHome)
+
 router.post('/login',Login)
-
-//admin
-router.get('/admin',LoginAuthenticator,adminPage)
-
+router.get('/logout',logoutUser);
+  
 
 module.exports = router; // Export the router directly

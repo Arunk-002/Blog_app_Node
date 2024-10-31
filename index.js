@@ -6,6 +6,7 @@ const DB = require("./dbConnection/connection")
 //user Routes
 const userRoute = require('./routes/user');
 const blogRoute = require('./routes/blog')
+const adminRoute = require('./routes/admin')
 const { compile } = require('ejs');
 
 //connecting database
@@ -22,6 +23,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json())
 
 app.use('/blog',blogRoute)
+app.use('/admin',adminRoute)
 app.use('/', userRoute);
 
 app.listen(8000, () => {
