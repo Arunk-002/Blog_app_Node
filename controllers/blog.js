@@ -12,7 +12,6 @@ async function blogCreateFormRender(req,res) {
 }
 
 async function blogUpdateFormRender(req,res) {
-
     const blogId=req.params.id.replace(/^:/, '')
     let curBlog =await blog.findById(blogId)
     if (req.user.id==curBlog.authorId || req.user.role=='admin') {
@@ -32,12 +31,8 @@ async function blogUpdateFormRender(req,res) {
 async function updateBlog(req, res) {
     const blogId = req.params.id.replace(/^:/, '');
     const { title, body } = req.body;
-
-    // Trim title and body to remove unnecessary whitespace
     const trimmedTitle = title?.trim();
     const trimmedBody = body?.trim();
-
-    // Check for empty title and body
     if (trimmedTitle && trimmedBody) {
         let result = await blog.findByIdAndUpdate(blogId, { title: trimmedTitle, body: trimmedBody });
         if (result && result.id) {
@@ -56,7 +51,7 @@ async function updateBlog(req, res) {
 
 
 function displayBlogs() {
-    return blog.find({})       
+    return blog.find().populate('authorId', 'name')       
     
 }
 

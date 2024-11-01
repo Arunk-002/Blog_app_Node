@@ -9,7 +9,6 @@ async function homeroute(req, res) {
     let admin = req.user.role === "admin";
     let id = req.user.id
     let curUser = await User.findById(id)
-    console.log(curUser);
     let blogs = await displayBlogs();    
     res.render('home', { blogs, admin,userName:curUser.name});
 }

@@ -10,16 +10,7 @@ async function adminPage(req,res) {
 }
 
 
-async function deleteUser(req,res) {
-    const userId = req.params.id.replace(/^:/, '')
-    User.findByIdAndDelete(userId)
-    .then((err)=>{
-        res.redirect('/admin')
-    })
-}
-
 
 module.exports={
     adminPage,
-    deleteUser
 }
