@@ -43,6 +43,8 @@
                         <th scope="col">#</th>
                         <th scope="col">Name</th>
                         <th scope="col">Email</th>
+                        <th scope="col">Status</th>
+                        <th scope="col"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -52,6 +54,19 @@
                                 <th scope="row"><%= index + 1 %></th>
                                 <td><%= user.name %></td>
                                 <td><%= user.email %></td>
+                                <td>
+                                    <% if (user.active) { %>
+                                        Active 
+                                        <a href="/admin/userblock/<%= user.id %>">
+                                            <button type="button" class=" px-2 btn btn-danger">block</button>
+                                        </a>
+                                    <% }else { %>
+                                        Blocked
+                                        <a href="/admin/useractive/<%= user.id %>">
+                                            <button type="button" class="px-2 btn btn-success">unblock</button>
+                                        </a>
+                                    <% } %>
+                                </td>
                             </tr>
                         <% }) %>
                     <% } else { %>

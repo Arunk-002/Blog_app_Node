@@ -53,7 +53,7 @@ async function Login(req,res) {
         const cur_user = await User.findOne({
             email:userData.email
         })
-        if(cur_user.password==userData.password){
+        if(cur_user.password==userData.password && cur_user.active){
             const token = createToken({
                 id:cur_user.id,
                 role:cur_user.role
@@ -65,15 +65,23 @@ async function Login(req,res) {
                 res.redirect('/')
             }
         }else{
-            throw new Error("Invalid Password");
+            if (!cur_user.active) {
+                throw new Error("Account is currently suspended");
+                
+            } else {
+                throw new Error("Invalid Password");
+            }
         }
-    } catch (error) {
-        if (error=="Invalid Password") {
+    }catch (err) {
+        if (err.message === "Invalid Password") {
             return res.render('login', { msg: 'Invalid password' });
-        }else{
-            return res.render('login', { msg: 'No user found with that email address.' });
+        } else if (err.message === "Account is currently suspended") {
+            return res.render('login', { msg: err.message });
+        } else {
+            return res.render('login', { msg: 'No user found with that email address' });
         }
     }
+    
     
 }
 

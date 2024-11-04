@@ -25,6 +25,10 @@ app.use(express.json())
 app.use('/blog',blogRoute)
 app.use('/admin',adminRoute)
 app.use('/', userRoute);
+//404 page.
+app.use((req, res) => {
+    res.status(404).render('404');
+  });
 
 app.listen(8000, () => {
     console.log('Server started');
