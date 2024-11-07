@@ -14,11 +14,13 @@ router.get('/',LoginAuthenticator, homeroute);
 
 //signup and login
 router.get('/signup',usersignupRender)
-router.get('/login',usersLoginRender)
-router.post('/signup',userCreation)
+      .post('/signup',userCreation)
+      
 router.get('/user',LoginAuthenticator,userHome)
 
-router.post('/login',Login)
+router.get('/login',usersLoginRender)
+       .post('/login',Login)
+
 router.get('/logout',logoutUser);
   
 

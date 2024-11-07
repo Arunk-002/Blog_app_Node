@@ -12,6 +12,10 @@ const blogSchema= mongoose.Schema({
     authorId:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'user'
+    },
+    isDeleted:{
+        type:Boolean,
+        default:false
     }
 },{timestamps:true})
 

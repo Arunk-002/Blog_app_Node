@@ -55,7 +55,7 @@
                                 <td><%= user.name %></td>
                                 <td><%= user.email %></td>
                                 <td>
-                                    <% if (user.active) { %>
+                                    <% if (user.status==='active') { %>
                                         Active 
                                         <a href="/admin/userblock/<%= user.id %>">
                                             <button type="button" class=" px-2 btn btn-danger">block</button>

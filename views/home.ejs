@@ -52,10 +52,15 @@
             <% if (blogs.length > 0) { %>
                 <% blogs.forEach(blog => { %>
                     <div class="col-md-6 col-lg-4 mb-4">
+                        
                         <a href="/blog/<%= blog.id %>" class="text-decoration-none text-dark">
-                            <div class="card h-100 shadow-sm card-hover"> <!-- Added card-hover class here -->
+                            <div class="card h-100 shadow-sm card-hover">
+                                <% if (blog.isAuthor) { %>
+                                    <img src="/images/accept.png" alt="" width="20px" height="20px" style="align-self: end;">
+                                <% } %>
                                 <div class="card-body">
                                     <h5 class="card-title"><%= blog.title %></h5>
+                                    <h5 class="card-title"><%= blog.isAuthor %></h5>
                                     <p class="card-text"><%= blog.body.substring(0, 100) %>...</p>
                                     <h5 class="card-title">By <%= blog.authorId.name %></h5>
                                 </div>

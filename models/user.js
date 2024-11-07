@@ -1,3 +1,4 @@
+const { status } = require('express/lib/response')
 const mongoose = require('mongoose')
 
 const userSchema = mongoose.Schema({
@@ -19,9 +20,10 @@ const userSchema = mongoose.Schema({
         enum:['user','admin'],
         default:'user'
     },
-    active:{
-        type:Boolean,
-        default:true
+    status:{
+        type:String,
+        enum:['active','cancel','suspended'],
+        default:'active'
     }
 },{timestamps:true})
 

@@ -3,7 +3,7 @@ const key = 'bs0w8%@'
 
 
 function createToken(id) {
-    return jwt.sign(id,key)
+    return jwt.sign(id,key,{expiresIn:'24hr'})
 }
 
 function verifyToken(token) {
