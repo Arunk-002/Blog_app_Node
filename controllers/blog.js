@@ -1,4 +1,5 @@
 const blog = require('../models/blog')
+const User=require('../models/user')
 
 
 async function blogCreateFormRender(req,res) { 
@@ -85,16 +86,23 @@ async function viewBlog(req,res) {
     }
 }
 
-async function addBlog(req,res) {
+async function addBlog(req,res,io) {
     try {
         const authId=req.user.id
         let blogBody = req.body;
+        let author = await User.findById(authId).select('name');
         await blog.create({
             authorId:authId,
             title:blogBody.title,
             body:blogBody.body
         }).then((result)=>{
             if(result.id){
+                io.emit('newPost', {
+                    id: result.id,
+                    title: result.title,
+                    body: result.body,
+                    authorName: author
+                });
                 res.redirect('/')
             }
         })

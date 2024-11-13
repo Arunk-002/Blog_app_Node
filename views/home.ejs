@@ -14,6 +14,8 @@
     </style>
 </head>
 <body>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/home.js"></script>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
@@ -48,11 +50,10 @@
             <a href="/blog/add" class="btn btn-success">Create Blog</a>
         </div>
 
-        <div class="row mt-4">
+        <div id="blogsDiv" class="row mt-4">
             <% if (blogs.length > 0) { %>
                 <% blogs.forEach(blog => { %>
                     <div class="col-md-6 col-lg-4 mb-4">
-                        
                         <a href="/blog/<%= blog.id %>" class="text-decoration-none text-dark">
                             <div class="card h-100 shadow-sm card-hover">
                                 <% if (blog.isAuthor) { %>
@@ -60,7 +61,6 @@
                                 <% } %>
                                 <div class="card-body">
                                     <h5 class="card-title"><%= blog.title %></h5>
-                                    <h5 class="card-title"><%= blog.isAuthor %></h5>
                                     <p class="card-text"><%= blog.body.substring(0, 100) %>...</p>
                                     <h5 class="card-title">By <%= blog.authorId.name %></h5>
                                 </div>
