@@ -1,4 +1,3 @@
-const { status } = require('express/lib/response')
 const User = require('../models/user')
 
 async function adminPage(req,res) {

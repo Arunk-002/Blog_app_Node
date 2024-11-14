@@ -28,6 +28,14 @@
         </div>
     </nav>
 
+    <!-- Notifications Section -->
+    <div class="container my-5">
+        <h4>Notifications</h4>
+        <ul id="notifications" class="list-group">
+   
+        </ul>
+    </div>
+
     <!-- Blog Content -->
     <div class="container my-5">
         <h2 class="mb-4">Available Blogs</h2>
@@ -51,5 +59,23 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Socket.IO Script -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io(); // Connect to Socket.IO server
+
+        // Listen for notifications
+        socket.on('likeNotification', (data) => {
+            const notificationList = document.getElementById('notifications');
+            const newNotification = document.createElement('div');
+            newNotification.classList.add('alert', 'alert-info', 'alert-dismissible', 'fade', 'show');
+            newNotification.setAttribute('role', 'alert');
+            newNotification.innerHTML = `<a href="/blog/${data.blogid}" class="alert-link">
+                <strong>${data.user.name}</strong> liked <strong>${data.title.substring(0, 20)}</strong></a>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+            notificationList.appendChild(newNotification);
+        });
+    </script>
 </body>
 </html>

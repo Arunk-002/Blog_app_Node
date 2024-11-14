@@ -11,6 +11,7 @@ async function homeroute(req, res) {
         let id = req.user.id
         let curUser = await User.findById(id)
         let blogs = await displayBlogs();
+        blogs.reverse()
         blogs.forEach(blog => {
             blog.isAuthor = blog.authorId.id.toString() === curUser.id.toString();
           });              

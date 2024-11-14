@@ -1,6 +1,6 @@
 const blog = require('../models/blog')
 const User=require('../models/user')
-
+const notification = require('../models/notifications')
 
 async function blogCreateFormRender(req,res) { 
     try {
@@ -42,20 +42,31 @@ async function updateBlog(req, res) {
     const { title, body } = req.body;
     const trimmedTitle = title?.trim();
     const trimmedBody = body?.trim();
-    if (trimmedTitle && trimmedBody) {
-        let result = await blog.findByIdAndUpdate(blogId, { title: trimmedTitle, body: trimmedBody });
-        if (result && result.id) {
-            return res.redirect('/');
+    const userId = req.user.id;
+    try {
+        const checkBlog = await blog.findById(blogId);
+        if (checkBlog && checkBlog.authorId.toString() === userId.toString()) {
+            if (trimmedTitle && trimmedBody) {
+                let result = await blog.findByIdAndUpdate(blogId, { title: trimmedTitle, body: trimmedBody });
+                if (result && result.id) {
+                    return res.redirect('/');
+                }
+            }
+            res.render('blogForm', {
+                type: "Update",
+                title: trimmedTitle,
+                body: trimmedBody,
+                blogId: blogId,
+                msg: 'Enter full details',
+            });
+        } else {
+            res.redirect('/');
         }
+    } catch (error) {
+        res.render('404');
     }
-    res.render('blogForm', {
-        type: "Update",
-        title: trimmedTitle,
-        body: trimmedBody,
-        blogId: blogId,
-        msg: 'Enter full details',
-    });
 }
+
 
 
 function displayBlogs() {
@@ -71,10 +82,24 @@ async function viewBlog(req,res) {
         if (!curBlog.id) {
             throw new Error("blog not found");
         }
-        let displayBlog = {
-            title:curBlog.title,
-            body:curBlog.body,
-            id:curBlog.id
+        let displayBlog
+        const hasLiked = await curBlog.likes.includes(userId)
+        if (hasLiked) {
+            displayBlog = {
+                title:curBlog.title,
+                body:curBlog.body,
+                id:curBlog.id,
+                liked:true,
+                likeCount: curBlog.likes.length
+            }
+        } else {
+            displayBlog = {
+                title:curBlog.title,
+                body:curBlog.body,
+                id:curBlog.id,
+                liked:false,
+                likeCount: curBlog.likes.length
+            }
         }
         if (curBlog.authorId?.toString()===userId?.toString() ||req.user.role=='admin') {
             res.render('blogView',{displayBlog,display:true})
@@ -103,7 +128,7 @@ async function addBlog(req,res,io) {
                     body: result.body,
                     authorName: author
                 });
-                res.redirect('/')
+                res.redirect('/') 
             }
         })
     } catch (error) {
@@ -111,22 +136,57 @@ async function addBlog(req,res,io) {
     }
 }
 
-async function blogDelete(req,res) {
+async function blogDelete(req, res) {
     try {
-        const blogId=req.params.id.replace(/^:/, '')
-        await blog.findByIdAndUpdate(blogId,{isDeleted:true})
-        .then((err)=>{
+        const blogId = req.params.id.replace(/^:/, '');
+        const userId = req.user.id;
+        let checkBlog = await blog.findById(blogId);
+        if (checkBlog && checkBlog.authorId.toString() === userId.toString()) {
+            await blog.findByIdAndUpdate(blogId, { isDeleted: true });
             console.log('blog deleted');
-            res.redirect('/')
-        })
+            res.redirect('/');
+        } else {
+            res.redirect('/');
+        }
     } catch (error) {
-        res.render('404')
+        res.render('404');
     }
 }
 
 
 function userBlogFinder(userId) {    
-    return  blog.find({authorId:userId})
+    return  blog.find({authorId:userId,isDeleted:false})
+}
+
+async function likeBlog(req,res,io) {
+    const blogId= req.params.id.replace(/^:/, '');
+    const userId=req.user.id
+    try {
+        const blogPost = await blog.findById(blogId)
+        const hasLiked = await blogPost.likes.includes(userId)
+        const userName = await User.findById(userId).select('name')
+        if (!hasLiked) {
+            blogPost.likes.push(userId);
+            await blogPost.save();
+            await notification.create({
+                userId:blogPost.authorId
+            })
+            io.emit('likeNotification', {
+                authorId: blogPost.authorId,
+                user: userName,
+                title:blogPost.title,
+                blogid: blogPost.id
+            });
+            return res.status(200).json({ liked:true });
+        } else {
+            blogPost.likes.pull(userId)
+            await blogPost.save();
+            return res.status(200).json({ liked:false });
+        }
+    } catch (error) {
+        console.log(error);
+        res.render('404')
+    }
 }
 
 module.exports={
@@ -137,5 +197,6 @@ module.exports={
     updateBlog,
     viewBlog,
     blogDelete,
-    userBlogFinder
+    userBlogFinder,
+    likeBlog
 }

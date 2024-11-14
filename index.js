@@ -17,12 +17,11 @@ const server = app.listen(8000, () => {
 });
 
 const io =require('socket.io')(server)
-io.on('connection',(socket)=>{
-  console.log('hello from server');
+io.on('connection',()=>{
+  console.log('socket connection initialized');
 })
 
 // passing io instance to blog route
-
 const blogRoute = require('./routes/blog')(io)
 
 //setting view
