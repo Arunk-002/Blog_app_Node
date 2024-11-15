@@ -19,7 +19,6 @@
 </head>
 <body>
     <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/home.js"></script>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
@@ -53,11 +52,13 @@
             <h2>All Blogs</h2>
             <a href="/blog/add" class="btn btn-success">Create Blog</a>
         </div>
-
+        <ul id="notifications" class="list-group">
+   
+        </ul>
         <div id="blogsDiv" class="row mt-4">
             <% if (blogs.length > 0) { %>
                 <% blogs.forEach(blog => { %>
-                    <div class="col-md-6 col-lg-4 mb-4">
+                    <div id=<%= blog.id %> class="col-md-6 col-lg-4 mb-4">
                         <a href="/blog/<%= blog.id %>" class="text-decoration-none text-dark">
                             <div class="card h-100 shadow-sm card-hover">
                                 <% if (blog.isAuthor) { %>
@@ -67,7 +68,7 @@
                                     <h5 class="card-title"><%= blog.title.substring(0, 30) %>...</h5>
                                     <p class="card-text"><%= blog.body.substring(0, 100) %>...</p>
                                     <h5 class="card-title">By <%= blog.authorId.name %></h5>
-                                    <p class="card-title"><i id="like" class="fa-solid fa-heart red fa-l px-2"></i><%= blog.likes.length %></p>
+                                    <p class="card-title"><i class="fa-solid fa-heart red fa-l px-2"></i><span id="l<%= blog.id %>"><%= blog.likes.length %></span></p>
                                 </div>
                             </div>
                         </a>
@@ -78,7 +79,8 @@
             <% } %>
         </div>
     </div>
-
+    <script src="/js/home.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 const blog = require('../models/blog')
 const User=require('../models/user')
-const notification = require('../models/notifications')
+const Notification = require('../models/notifications')
 
 async function blogCreateFormRender(req,res) { 
     try {
@@ -136,14 +136,17 @@ async function addBlog(req,res,io) {
     }
 }
 
-async function blogDelete(req, res) {
+async function blogDelete(req, res,io) {
     try {
         const blogId = req.params.id.replace(/^:/, '');
         const userId = req.user.id;
         let checkBlog = await blog.findById(blogId);
         if (checkBlog && checkBlog.authorId.toString() === userId.toString()) {
             await blog.findByIdAndUpdate(blogId, { isDeleted: true });
-            console.log('blog deleted');
+            io.emit('updated',{
+                id:blogId,
+                delete:true
+            })
             res.redirect('/');
         } else {
             res.redirect('/');
@@ -168,25 +171,40 @@ async function likeBlog(req,res,io) {
         if (!hasLiked) {
             blogPost.likes.push(userId);
             await blogPost.save();
-            await notification.create({
+            const notification = await Notification.create({
                 userId:blogPost.authorId
             })
             io.emit('likeNotification', {
                 authorId: blogPost.authorId,
                 user: userName,
                 title:blogPost.title,
-                blogid: blogPost.id
+                blogid: blogPost.id,
+                msgId:notification.id
             });
             return res.status(200).json({ liked:true });
         } else {
             blogPost.likes.pull(userId)
             await blogPost.save();
+            io.emit('unliked',{
+                unliked:true,
+                blogid:blogPost.id
+            })
             return res.status(200).json({ liked:false });
         }
     } catch (error) {
         console.log(error);
         res.render('404')
     }
+}
+
+async function removeNotification(req,res) {
+    const id = req.params.id.replace(/^:/, '');
+    Notification.findByIdAndDelete(id).then((res)=>{
+        if (res) {
+            console.log('deleted');
+        }
+    })
+    res.redirect('/')
 }
 
 module.exports={
@@ -198,5 +216,6 @@ module.exports={
     viewBlog,
     blogDelete,
     userBlogFinder,
-    likeBlog
+    likeBlog,
+    removeNotification
 }

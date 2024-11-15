@@ -71,9 +71,10 @@
             const newNotification = document.createElement('div');
             newNotification.classList.add('alert', 'alert-info', 'alert-dismissible', 'fade', 'show');
             newNotification.setAttribute('role', 'alert');
-            newNotification.innerHTML = `<a href="/blog/${data.blogid}" class="alert-link">
-                <strong>${data.user.name}</strong> liked <strong>${data.title.substring(0, 20)}</strong></a>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+            newNotification.innerHTML = `
+                <a href="/blog/${data.blogid}" class="alert-link">
+                    <strong>${data.user.name}</strong> liked <strong>${data.title.substring(0, 20)}</strong>...</a>
+                <a href="/blog/del/notify/${data.msgId}" class="btn-close" aria-label="Close"></a>`;
             notificationList.appendChild(newNotification);
         });
     </script>
