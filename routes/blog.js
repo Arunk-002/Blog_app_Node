@@ -12,7 +12,7 @@ module.exports = (io) => {
         // Other routes
     router.get('/:id', LoginAuthenticator, viewBlog);
     router.get('/edit/:id', LoginAuthenticator, blogUpdateFormRender)
-        .post('/edit/:id', LoginAuthenticator, updateBlog);
+        .post('/edit/:id', LoginAuthenticator, (req, res) => updateBlog(req, res, io));
     router.get('/del/:id', LoginAuthenticator,(req, res) => blogDelete(req, res, io));
     router.get('/del/notify/:id',LoginAuthenticator,removeNotification)
     router.get('/like/:id', LoginAuthenticator, (req, res) => likeBlog(req, res, io)); // Pass io to likeBlog

@@ -76,6 +76,17 @@
                     <strong>${data.user.name}</strong> liked <strong>${data.title.substring(0, 20)}</strong>...</a>
                 <a href="/blog/del/notify/${data.msgId}" class="btn-close" aria-label="Close"></a>`;
             notificationList.appendChild(newNotification);
+            setTimeout(() => {
+            fetch(`http://localhost:8000/blog/del/notify/${data.msgId}`)
+            .then((res)=>{
+                console.log(res);
+            })
+            newNotification.style.transition = 'opacity 0.5s ease';
+            newNotification.style.opacity = '0';
+            setTimeout(() => {
+                newNotification.remove();
+            }, 500); 
+        }, 10000);  
         });
     </script>
 </body>
