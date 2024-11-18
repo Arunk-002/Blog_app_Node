@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express');
 const path = require('path');
 const app = express();
@@ -10,9 +11,8 @@ const { compile } = require('ejs');
 
 //connecting database
 DB()
-
 //socket io connection
-const server = app.listen(8000, () => {
+const server = app.listen(process.env.PORT, () => {
   console.log('Server started at 8000');
 });
 
