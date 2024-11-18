@@ -35,7 +35,7 @@
             `;
         notificationList.appendChild(newNotification);
         setTimeout(() => {
-            fetch(`http://localhost:8000/blog/del/notify/${data.msgId}`)
+            fetch(`http://13.235.71.43:8000/blog/del/notify/${data.msgId}`)
             .then((res)=>{
                 console.log(res);
             })
