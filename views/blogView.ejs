@@ -73,7 +73,7 @@
             e.target.classList.toggle('red');
             // Send like request to server
             try {
-                const response = await fetch(`http://localhost:8000/blog/like/${blogId}`);
+                const response = await fetch(`http://13.235.71.43:8000/blog/like/${blogId}`);
                 const result = await response.json();
                 if (result.liked) {
                     likeCountElement.innerHTML=likeCount+1
