@@ -32,13 +32,9 @@
         newNotification.innerHTML = `
             <a href="/blog/${data.blogid}" class="alert-link">
                 <strong>${data.user.name}</strong> liked <strong>${data.title.substring(0, 20)}</strong>...</a>
-            `;
+            <a href="/blog/del/notify/${data.msgId}" class="btn-close" aria-label="Close"></a>`;
         notificationList.appendChild(newNotification);
         setTimeout(() => {
-            fetch(`http://localhost:8000/blog/del/notify/${data.msgId}`)
-            .then((res)=>{
-                console.log(res);
-            })
             newNotification.style.transition = 'opacity 0.5s ease';
             newNotification.style.opacity = '0';
             setTimeout(() => {
@@ -52,25 +48,8 @@
         let likeCount = Number(likeCountElement.textContent)
         likeCountElement.innerHTML=likeCount-1
     })
-    socket.on('deleted',(data)=>{
+    socket.on('updated',(data)=>{
         document.getElementById(data.id)?.remove()
-    })
-    socket.on('updateBlog',(data)=>{        
-        let blogsDiv= document.getElementById(data.id)
-        blogsDiv.innerHTML =`
-            <div class="col-md-6 col-lg-4 mb-4">
-                <a href="/blog/${data.id}" class="text-decoration-none text-dark">
-                    <div class="card h-100 shadow-sm card-hover">
-                        <div class="card-body">
-                            <h5 class="card-title">${data.title}</h5>
-                            <p class="card-text">${data.body.substring(0, 100)}...</p>
-                            <h5 class="card-title">By ${data.authorName}</h5>
-                            <p class="card-title"><i class="fa-solid fa-heart red fa-l px-2"></i><span id="l${data.id}">${data.likes}</span></p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-        `
     })
 })()
 

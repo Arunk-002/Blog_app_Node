@@ -37,7 +37,7 @@ async function blogUpdateFormRender(req,res) {
 
 }
 
-async function updateBlog(req, res,io) {
+async function updateBlog(req, res) {
     const blogId = req.params.id.replace(/^:/, '');
     const { title, body } = req.body;
     const trimmedTitle = title?.trim();
@@ -49,15 +49,6 @@ async function updateBlog(req, res,io) {
             if (trimmedTitle && trimmedBody) {
                 let result = await blog.findByIdAndUpdate(blogId, { title: trimmedTitle, body: trimmedBody });
                 if (result && result.id) {
-                    const author = await User.findById(result.authorId)
-                    console.log(author);
-                    io.emit('updateBlog', {
-                        id: result.id,
-                        title: trimmedTitle,
-                        body: trimmedBody,
-                        authorName: author.name,
-                        likes:result.likes.length
-                    });
                     return res.redirect('/');
                 }
             }
@@ -135,8 +126,7 @@ async function addBlog(req,res,io) {
                     id: result.id,
                     title: result.title,
                     body: result.body,
-                    authorName: author,
-                    likes:result.likes.length
+                    authorName: author
                 });
                 res.redirect('/') 
             }
@@ -153,7 +143,7 @@ async function blogDelete(req, res,io) {
         let checkBlog = await blog.findById(blogId);
         if (checkBlog && checkBlog.authorId.toString() === userId.toString()) {
             await blog.findByIdAndUpdate(blogId, { isDeleted: true });
-            io.emit('deleted',{
+            io.emit('updated',{
                 id:blogId,
                 delete:true
             })
